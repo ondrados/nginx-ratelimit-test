@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+    nginx:
+        build: nginx
+        ports:
+          - "80:80"
+        depends_on:
+          - fastapi
+
+    fastapi:
+        build: fastapi
+        volumes:
+          - ./fastapi/:/app/
+        expose:
+          - "8080"

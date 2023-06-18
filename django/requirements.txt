@@ -1,0 +1,13 @@
+django
+psycopg[c]
+gunicorn
+django-extensions
+djangorestframework
+django-cors-headers
+tqdm
+celery
+django-celery-results
+django-redis
+requests
+eventlet
+# django_celery_beat

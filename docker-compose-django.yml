@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  django: &django
+    build: django
+    command: /usr/src/start.sh
+    volumes:
+      - ./django/:/usr/src/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=foo
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=devel
+      - SQL_USER=user
+      - SQL_PASSWORD=password
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12.2-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=devel
+
+  redis:
+    image: redis:latest
+
+  celery-worker:
+    <<: *django
+    command: celery -A app.celery.app worker -l INFO -P eventlet --concurrency=15
+    ports: [ ]
+    depends_on:
+      - django
+      - redis
